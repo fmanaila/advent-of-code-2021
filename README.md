@@ -1,0 +1,1 @@
+This repository contains my humble attempt at solving the [Advent of Code 2021](https://adventofcode.com/2021) problems in Kotlin.
