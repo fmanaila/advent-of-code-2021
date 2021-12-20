@@ -90,8 +90,9 @@ fun tryLocateScanner(sourceScanner: Scanner, nextScanner: Scanner): LocatedScann
         val rotatedScanner = nextScanner.rotate(rotation)
         val sourceDistances = distances(sourceScanner.beacons)
         val targetDistances = distances(rotatedScanner.beacons)
-        // if there is 1 beacon with same distance to at least 11 other beacons,
-        // then the beacon is the same
+        // if there is 1 beacon in each scanner with same distance to at least 11 other beacons,
+        // as the beacon in the other scanner,
+        // then the beacons are the same
         for ((src, sDistances) in sourceDistances) {
             for ((trg, tDistances) in targetDistances) {
                 val overlap = overlap(sDistances, tDistances)
@@ -118,14 +119,12 @@ fun tryLocateScanner(sourceScanner: Scanner, nextScanner: Scanner): LocatedScann
 }
 
 fun overlap(sDistances: List<Distance>, tDistances: List<Distance>): Int {
-    val union = sDistances.toMutableSet()
-    union.addAll(tDistances)
-    return sDistances.size + tDistances.size - union.size
+    return sDistances.intersect(tDistances.toSet()).size
 }
 
 fun distances(coords: List<Coordinates>): Map<Coordinates, List<Distance>> {
-    return coords.associateWith { b ->
-        coords.mapNotNull { t -> if (b !== t) b.distanceTo(t) else null }
+    return coords.associateWith { src ->
+        coords.mapNotNull { tgt -> if (src !== tgt) src.distanceTo(tgt) else null }
     }
 }
 
